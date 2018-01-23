@@ -1,5 +1,6 @@
 package Client;
 
+import PhilFTP2.ProtocolStarter;
 import Utilities.FileUtility;
 import com.sun.istack.internal.NotNull;
 
@@ -19,8 +20,11 @@ public class Client {
     public static void main(String... args) {
         readArguments(args);
         clientSocket = createSocket();
+
+        new ProtocolStarter(clientSocket, 500, 3);
+
         connection = connectToServer();
-        sendFileInformation();
+        //sendFileInformation();
 
         connection.disconnect();
     }
@@ -63,16 +67,14 @@ public class Client {
         try {
             File fileToSend = new File(file);
             if(!fileToSend.exists()) throw new FileNotFoundException();
-            String message = "SENDING FILE:";
-            message += fileToSend.getName() + ";"
+            String cmd = "FLI";
+            String message = fileToSend.getName() + ";"
                     + fileToSend.length() + ";"
                     + FileUtility.calculateMD5(file);
-            connection.sendMessage(message);
+            connection.sendMessage(cmd, message);
         } catch (FileNotFoundException e) {
             System.err.println("File given in argument cannot be found!");
             System.exit(1);
-        } catch (IOException e) {
-            System.err.println("Could not send information about file!");
         }
     }
 }

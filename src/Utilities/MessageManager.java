@@ -1,28 +1,22 @@
 package Utilities;
 
+import PhilFTP2.Receiver;
+import PhilFTP2.Sender;
+
 import java.io.IOException;
 import java.net.DatagramPacket;
-import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.SocketException;
+import java.net.InetSocketAddress;
 
 public class MessageManager {
-    public static void sendMessage(String message, DatagramSocket socket, InetAddress destinationAddress, int destinationPort) throws IOException {
-        System.out.println("[SND]:" + message);
-        byte[] buffer = message.getBytes();
-        DatagramPacket packet = new DatagramPacket(buffer, buffer.length, destinationAddress, destinationPort);
-        socket.send(packet);
+    public static void sendMessage(String cmd, String data, InetAddress destinationAddress, int destinationPort) throws IOException {
+        Sender.sendSingleMessage(cmd, data, new InetSocketAddress(destinationAddress, destinationPort));
     }
 
-    public static String receiveMessage(DatagramSocket clientSocket) throws SocketException,IOException {
-        DatagramPacket packet = receiveMessageInPacket(clientSocket);
-        return new String(packet.getData(), 0, packet.getLength());
-    }
-
-    public static DatagramPacket receiveMessageInPacket(DatagramSocket clientSocket) throws SocketException,IOException {
-        byte[] buffer = new byte[256];
-        DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
-        clientSocket.receive(packet);
-        return packet;
+    public static DatagramPacket receiveMessage() {
+        while (Receiver.received.isEmpty()) {
+            //waiting to get any response
+        }
+        return Receiver.received.getLast();
     }
 }

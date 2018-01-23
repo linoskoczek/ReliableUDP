@@ -10,6 +10,7 @@ class Connection extends MessageManager {
     private DatagramSocket clientSocket;
     private InetAddress serverAddress;
     private int serverPort;
+    volatile boolean connectionConfirmed = false;
 
     Connection(DatagramSocket clientSocket, String serverAddress, int serverPort) throws IOException {
         this.clientSocket = clientSocket;
@@ -20,29 +21,34 @@ class Connection extends MessageManager {
     }
 
     private void welcome() throws IOException {
-        boolean success = false;
-        for(int i = 0; i < 3; i++) {
-            String message = "HAI!ME CLIENT";
-            sendMessage(message);
-            String answer = receiveMessage(clientSocket);
+        System.out.print("Sending WELCOME message... ");
+        String cmd = "HAI";
+        String message = "ME CLIENT";
 
-            if (answer.equals("HAI!ME SERVER")) {
-                success = true;
-                break;
-            }
+        sendMessage(cmd, message, serverAddress, serverPort);
+        System.out.print("SENT! Waiting for answer... ");
+        while (!connectionConfirmed) {
+
         }
-        if(!success) System.err.println("Could not send WELCOME message to the server.");
+        System.out.println(" ANSWER RECEIVED!");
     }
 
-    void sendMessage(String message) throws IOException {
-        sendMessage(message, clientSocket, serverAddress, serverPort);
+    public void confirmConnection() {
+        connectionConfirmed = true;
     }
 
     public void disconnect() {
+        sendMessage("DSC", "DISCONNECT");
+    }
+
+    public void sendMessage(String cmd, String data) {
         try {
-            sendMessage("DISCONNECT");
+            sendMessage(cmd, data, serverAddress, serverPort);
         } catch (IOException e) {
-            System.err.println("Could not send DISCONNECT message.");
+            e.printStackTrace();
+            System.err.println("Could not send a message:");
+            System.err.println("COMMAND:" + cmd);
+            System.err.println("DATA:" + data);
         }
     }
 }

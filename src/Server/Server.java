@@ -1,14 +1,13 @@
 package Server;
 
+import PhilFTP2.ProtocolStarter;
+import Utilities.MessageManager;
 import com.sun.istack.internal.NotNull;
 
-import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
 import java.net.SocketException;
-
-import static Utilities.MessageManager.*;
 
 public class Server {
     static MessageProcessor messageProcessor = null;
@@ -20,6 +19,9 @@ public class Server {
     public static void main(String... args) {
         readArguments(args);
         serverSocket = createSocket();
+
+        new ProtocolStarter(serverSocket, 500, 3);
+
         startReceiver();
     }
 
@@ -48,12 +50,9 @@ public class Server {
     @SuppressWarnings("InfiniteLoopStatement")
     private static void startReceiver() {
         while(receiverRunning) {
-            try {
-                DatagramPacket packet = receiveMessageInPacket(serverSocket);
-                receivedAction(packet);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            DatagramPacket packet = MessageManager.receiveMessage();
+            System.out.println(packet);
+            receivedAction(packet);
         }
         System.out.println("Exiting...");
     }

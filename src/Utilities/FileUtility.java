@@ -30,7 +30,6 @@ public class FileUtility {
     }
 
     public static  String calculateMD5(byte[] bytes) {
-        System.out.print("Creating MD5 of a file (this might take a while)... ");
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
             byte[] md5bytes = md.digest(bytes);
@@ -38,8 +37,7 @@ public class FileUtility {
             System.out.println(md5);
             return md5;
         } catch (NoSuchAlgorithmException e) {
-            System.err.println("FAILURE");
-            System.err.println("Could not generate MD5 hash of file!");
+            System.err.println("Could not generate MD5 hash!");
             e.printStackTrace();
             return null;
         }

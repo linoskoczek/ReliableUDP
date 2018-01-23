@@ -1,7 +1,5 @@
 package Server;
 
-import Utilities.MessageManager;
-
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -29,31 +27,31 @@ public class MessageProcessor {
         System.out.println("[RCV] " + msg);
         String[] message = msg.split(":"); //todo check with ':' as a file content or it's name
 
-        switch(message[0]) {
-            case "HAI!ME CLIENT":
+        switch (message[2]) {
+            case "HAI":
                 welcomeMessageAnswer();
                 break;
-            case "SENDING FILE":
-                processSendingFile(message[1]);
+            case "FLI":
+                processFileInformation(message[4]);
                 break;
-            case "FILE CONTINENT":
-                processFileContinent(message[1]);
+            case "CNT":
+                processFileContinent(message[4]);
                 break;
-            case "DISCONNECT":
+            case "DSC":
                 Server.session.disconnect();
                 break;
             default:
-                System.out.println("Unrecognized message arrived. Ignoring...");
+                System.out.println("Unrecognized message arrived. Ignoring... CMD: " + message[2]);
         }
     }
 
-    private void processSendingFile(String message) {
+    private void processFileInformation(String message) {
         String[] fileInformation = message.split(";");
         String name = fileInformation[0];
         String md5 = fileInformation[1];
         long size = Long.valueOf(fileInformation[1]);
 
-        fileReceiver = new FileReceiver(name, size);
+        fileReceiver = new FileReceiver(name, size, md5);
     }
 
     private void processFileContinent(String message) {
@@ -61,23 +59,12 @@ public class MessageProcessor {
     }
 
     void welcomeMessageAnswer() {
-        String message = "HAI!ME SERVER";
+        String cmd = "HAI";
+        String message = "ME SERVER";
         try {
-            sendMessage(message, serverSocket, clientAddress, clientPort);
+            sendMessage(cmd, message, clientAddress, clientPort);
         } catch (IOException e) {
             System.err.println("Could not send WELCOME message to the client.");
-        }
-    }
-
-    public boolean isNotOtherPerson(DatagramPacket packet) {
-        return packet.getAddress() == clientAddress;
-    }
-
-    public void sendBusyMessage() {
-        try {
-            MessageManager.sendMessage("ME BUSY SORI", serverSocket, clientAddress, clientPort);
-        } catch (IOException e) {
-            System.err.println("Could not send BUSY message to the person who wanted to connect.");
         }
     }
 }
