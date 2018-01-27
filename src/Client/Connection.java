@@ -16,11 +16,10 @@ class Connection extends MessageManager {
         this.clientSocket = clientSocket;
         this.serverAddress = InetAddress.getByName(serverAddress);
         this.serverPort = serverPort;
-
-        welcome();
     }
 
-    private void welcome() throws IOException {
+    @SuppressWarnings("StatementWithEmptyBody")
+    void welcome() throws IOException {
         System.out.print("Sending WELCOME message... ");
         String cmd = "HAI";
         String message = "ME CLIENT";
@@ -28,9 +27,9 @@ class Connection extends MessageManager {
         sendMessage(cmd, message, serverAddress, serverPort);
         System.out.print("SENT! Waiting for answer... ");
         while (!connectionConfirmed) {
-
+            //waiting for answer
         }
-        System.out.println(" ANSWER RECEIVED!");
+        System.out.println("=== WELCOME ===!");
     }
 
     public void confirmConnection() {

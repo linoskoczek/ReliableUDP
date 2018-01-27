@@ -34,7 +34,6 @@ public class FileUtility {
             MessageDigest md = MessageDigest.getInstance("MD5");
             byte[] md5bytes = md.digest(bytes);
             String md5 = (new HexBinaryAdapter()).marshal(md5bytes);
-            System.out.println(md5);
             return md5;
         } catch (NoSuchAlgorithmException e) {
             System.err.println("Could not generate MD5 hash!");

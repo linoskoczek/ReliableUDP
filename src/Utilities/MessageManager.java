@@ -17,6 +17,6 @@ public class MessageManager {
         while (Receiver.received.isEmpty()) {
             //waiting to get any response
         }
-        return Receiver.received.getLast();
+        return Receiver.received.pollLast();
     }
 }

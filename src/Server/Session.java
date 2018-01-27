@@ -49,10 +49,10 @@ public class Session extends Thread {
     }
 
     void disconnect() {
+        System.out.println("Disconnecting from a client. Exiting.");
         serverSocket.disconnect();
-        Server.messageProcessor = null;
+        Server.serverMessageProcessor = null;
         shouldExit = true;
-        System.out.println("Disconnected from a client. Exiting.");
         Server.receiverRunning = false;
         System.exit(0);
     }

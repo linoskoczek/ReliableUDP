@@ -21,9 +21,7 @@ public class ClientMessageReceiver extends Thread {
     }
 
     private void processMessage(String msg) {
-        System.out.println("[RCV] " + msg);
         String[] message = msg.split(":"); //todo check with ':' as a file content or it's name
-
         switch (message[2]) {
             case "HAI":
                 reactOnMyWelcomeMessage();

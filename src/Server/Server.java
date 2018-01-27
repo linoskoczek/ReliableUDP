@@ -10,7 +10,7 @@ import java.net.InetSocketAddress;
 import java.net.SocketException;
 
 public class Server {
-    static MessageProcessor messageProcessor = null;
+    static ServerMessageProcessor serverMessageProcessor = null;
     static DatagramSocket serverSocket;
     static int port, speed;
     static boolean receiverRunning = true;
@@ -51,7 +51,6 @@ public class Server {
     private static void startReceiver() {
         while(receiverRunning) {
             DatagramPacket packet = MessageManager.receiveMessage();
-            System.out.println(packet);
             receivedAction(packet);
         }
         System.out.println("Exiting...");
@@ -61,12 +60,12 @@ public class Server {
         if(session == null || session.isTimedOut()) {
             openSession();
         }
-        if(messageProcessor == null) {
+        if (serverMessageProcessor == null) {
             createMessageProcessor(packet);
-            connectSocketToThisSpecificClient(packet);
+            //connectSocketToThisSpecificClient(packet);
         }
         session.updateTime();
-        messageProcessor.processMessage(packet);
+        serverMessageProcessor.processMessage(packet);
     }
 
     private static void openSession() {
@@ -75,7 +74,7 @@ public class Server {
     }
 
     private static void createMessageProcessor(DatagramPacket packet) {
-        messageProcessor = new MessageProcessor(serverSocket, packet.getAddress(), packet.getPort());
+        serverMessageProcessor = new ServerMessageProcessor(serverSocket, packet.getAddress(), packet.getPort());
     }
 
     private static void connectSocketToThisSpecificClient(DatagramPacket packet) {

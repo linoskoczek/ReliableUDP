@@ -10,14 +10,15 @@ public class Sender {
 
     public static boolean sendSingleMessage(String cmd, String data, SocketAddress address) throws IOException {
         short ackId = AcknowledgeMaster.getInstance().getACKid();
+        System.out.println("OUT: " + ackId + " " + cmd + " " + data);
         byte[] buffer = prepareMessage(ackId, cmd, data).getBytes();
         DatagramPacket packet = new DatagramPacket(buffer, buffer.length, address);
 
         for (int i = 0; i < ProtocolStarter.numOfTries; i++) {
             ProtocolStarter.socket.send(packet);
-            if (waitFor(ackId)) return true;
+            if (cmd.equals("ACK") || waitFor(ackId)) return true;
         }
-        System.err.println("Packet " + ackId + " couldn't be delivered :(");
+        System.err.println("Packet " + ackId + " couldn't have been delivered :(");
         return false;
     }
 
@@ -33,7 +34,7 @@ public class Sender {
 
     public static void sendAck(short ackId, SocketAddress address) {
         try {
-            sendSingleMessage("ACK", "", address);
+            sendSingleMessage("ACK", String.valueOf(ackId), address);
         } catch (IOException e) {
             e.printStackTrace();
             System.err.println("Could not send ACK message!");
@@ -48,8 +49,10 @@ public class Sender {
         return (new StringBuilder())
                 .append(ackId)
                 .append(":")
-                .append(getChecksum(ackId + cmd + data)).append(":")
+                .append(getChecksum(ackId + cmd + data))
+                .append(":")
                 .append(cmd)
+                .append(":")
                 .append(data.length())
                 .append(":")
                 .append(data)

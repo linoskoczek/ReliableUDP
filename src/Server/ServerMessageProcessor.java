@@ -7,13 +7,13 @@ import java.net.InetAddress;
 
 import static Utilities.MessageManager.sendMessage;
 
-public class MessageProcessor {
+public class ServerMessageProcessor {
     DatagramSocket serverSocket;
     InetAddress clientAddress;
     FileReceiver fileReceiver;
     int clientPort;
 
-    public MessageProcessor(DatagramSocket serverSocket, InetAddress clientAddress, int clientPort) {
+    public ServerMessageProcessor(DatagramSocket serverSocket, InetAddress clientAddress, int clientPort) {
         this.serverSocket = serverSocket;
         this.clientAddress = clientAddress;
         this.clientPort = clientPort;
@@ -24,7 +24,6 @@ public class MessageProcessor {
     }
 
     void processMessage(String msg) {
-        System.out.println("[RCV] " + msg);
         String[] message = msg.split(":"); //todo check with ':' as a file content or it's name
 
         switch (message[2]) {

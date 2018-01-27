@@ -1,6 +1,8 @@
 package PhilFTP2;
 
+import java.io.IOException;
 import java.net.DatagramPacket;
+import java.util.Arrays;
 import java.util.LinkedList;
 
 public class Receiver extends Thread {
@@ -15,13 +17,21 @@ public class Receiver extends Thread {
         while (true) {
             byte[] buffer = new byte[1280];
             DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
+            try {
+                ProtocolStarter.socket.receive(packet);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
             String[] splitted = new String(packet.getData(), 0, packet.getLength()).split(":");
+
+            System.out.println("IN: " + Arrays.toString(splitted));
+
             if (splitted.length == 5) {
                 try {
                     switch (splitted[2]) {
                         case "ACK":
-                            AcknowledgeMaster.getInstance().acknowledge(Short.parseShort(splitted[0]));
+                            AcknowledgeMaster.getInstance().acknowledge(Short.parseShort(splitted[4]));
                             break;
                         default:
                             Sender.sendAck(Short.parseShort(splitted[0]), packet.getSocketAddress());
@@ -31,6 +41,8 @@ public class Receiver extends Thread {
                 } catch (ArrayIndexOutOfBoundsException ignored) {
                     System.out.println("Some corrupted data received...");
                 }
+            } else {
+                System.out.println("Received packet is incomplete");
             }
         }
     }

@@ -16,14 +16,22 @@ public class Client {
     static int serverPort;
     static InputStream in = null;
     static OutputStream out = null;
+    static ClientMessageReceiver clientMessageReceiver;
 
     public static void main(String... args) {
         readArguments(args);
         clientSocket = createSocket();
 
+        clientMessageReceiver = new ClientMessageReceiver();
+        clientMessageReceiver.start();
         new ProtocolStarter(clientSocket, 500, 3);
 
         connection = connectToServer();
+        try {
+            connection.welcome();
+        } catch (IOException e) {
+            System.out.println("WELCOME failed");
+        }
         //sendFileInformation();
 
         connection.disconnect();
