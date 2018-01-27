@@ -10,7 +10,7 @@ class Connection extends MessageManager {
     private DatagramSocket clientSocket;
     private InetAddress serverAddress;
     private int serverPort;
-    volatile boolean connectionConfirmed = false;
+    volatile boolean connectionOpened = false;
 
     Connection(DatagramSocket clientSocket, String serverAddress, int serverPort) throws IOException {
         this.clientSocket = clientSocket;
@@ -20,24 +20,22 @@ class Connection extends MessageManager {
 
     @SuppressWarnings("StatementWithEmptyBody")
     void welcome() throws IOException {
-        System.out.print("Sending WELCOME message... ");
         String cmd = "HAI";
         String message = "ME CLIENT";
 
         sendMessage(cmd, message, serverAddress, serverPort);
-        System.out.print("SENT! Waiting for answer... ");
-        while (!connectionConfirmed) {
+        while (!connectionOpened) {
             //waiting for answer
         }
-        System.out.println("=== WELCOME ===!");
     }
 
     public void confirmConnection() {
-        connectionConfirmed = true;
+        connectionOpened = true;
     }
 
     public void disconnect() {
         sendMessage("DSC", "DISCONNECT");
+        System.exit(0);
     }
 
     public void sendMessage(String cmd, String data) {

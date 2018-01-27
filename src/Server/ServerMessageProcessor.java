@@ -34,7 +34,7 @@ public class ServerMessageProcessor {
                 processFileInformation(message[4]);
                 break;
             case "CNT":
-                processFileContinent(message[4]);
+                processFileContent(message[4]);
                 break;
             case "DSC":
                 Server.session.disconnect();
@@ -51,9 +51,22 @@ public class ServerMessageProcessor {
         long size = Long.valueOf(fileInformation[1]);
 
         fileReceiver = new FileReceiver(name, size, md5);
+        fileReceiver.setSpeed(Server.speed);
+
+        acceptFileReceive();
     }
 
-    private void processFileContinent(String message) {
+    private void acceptFileReceive() {
+        String cmd = "FLI";
+        String message = "KK;" + fileReceiver.getSpeed();
+        try {
+            sendMessage(cmd, message, clientAddress, clientPort);
+        } catch (IOException e) {
+            System.err.println("Could not send information about receiving file to the client.");
+        }
+    }
+
+    private void processFileContent(String message) {
         if(fileReceiver == null) return;
     }
 

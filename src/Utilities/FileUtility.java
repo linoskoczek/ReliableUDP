@@ -4,6 +4,7 @@ import com.sun.istack.internal.NotNull;
 
 import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.security.MessageDigest;
@@ -45,5 +46,17 @@ public class FileUtility {
     public static String calculateMD5(String path) {
         byte[] bytesOfMessage = getByteArrayOfFile(path);
         return calculateMD5(bytesOfMessage);
+    }
+
+    public static String calculateFileMD5(File file) {
+        String md5 = "";
+        try {
+            FileInputStream fis = new FileInputStream(file);
+            md5 = org.apache.commons.codec.digest.DigestUtils.md5Hex(fis);
+            fis.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return md5;
     }
 }

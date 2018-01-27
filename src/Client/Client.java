@@ -1,10 +1,12 @@
 package Client;
 
 import PhilFTP2.ProtocolStarter;
-import Utilities.FileUtility;
 import com.sun.istack.internal.NotNull;
 
-import java.io.*;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
 import java.net.SocketException;
@@ -17,6 +19,7 @@ public class Client {
     static InputStream in = null;
     static OutputStream out = null;
     static ClientMessageReceiver clientMessageReceiver;
+    static FileSender fileSender;
 
     public static void main(String... args) {
         readArguments(args);
@@ -32,9 +35,14 @@ public class Client {
         } catch (IOException e) {
             System.out.println("WELCOME failed");
         }
-        //sendFileInformation();
+        sendFileInformation();
+        Thread sender = new Thread(fileSender);
+        sender.start();
 
-        connection.disconnect();
+        while (true) {
+        }
+
+//        connection.disconnect();
     }
 
     private static void readArguments(@NotNull String[] args) {
@@ -73,16 +81,19 @@ public class Client {
 
     private static void sendFileInformation() {
         try {
-            File fileToSend = new File(file);
-            if(!fileToSend.exists()) throw new FileNotFoundException();
+            fileSender = new FileSender(file);
+
             String cmd = "FLI";
-            String message = fileToSend.getName() + ";"
-                    + fileToSend.length() + ";"
-                    + FileUtility.calculateMD5(file);
+            String message = fileSender.getName() + ";"
+                    + fileSender.getSize() + ";"
+                    + fileSender.getNumberOfParts() + ";"
+                    + fileSender.generateFileMD5();
             connection.sendMessage(cmd, message);
         } catch (FileNotFoundException e) {
             System.err.println("File given in argument cannot be found!");
             System.exit(1);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

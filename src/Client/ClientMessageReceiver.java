@@ -3,6 +3,7 @@ package Client;
 import Utilities.MessageManager;
 
 import java.net.DatagramPacket;
+import java.util.Arrays;
 
 public class ClientMessageReceiver extends Thread {
     boolean receiverRunning = true;
@@ -26,12 +27,24 @@ public class ClientMessageReceiver extends Thread {
             case "HAI":
                 reactOnMyWelcomeMessage();
                 break;
+            case "FLI":
+                fileInformationAnswerReceived(message[4]);
+                break;
             default:
                 System.out.println("Unrecognized message arrived. Ignoring... CMD: " + message[2]);
         }
     }
 
+    private void fileInformationAnswerReceived(String message) {
+        String[] content = message.split(";");
+        System.out.println(Arrays.toString(content));
+        if (content[0].equals("KK")) {
+            Client.fileSender.setSpeed(Integer.parseInt(content[1]));
+            System.out.println("Speed changed to " + content[1]);
+        }
+    }
+
     private void reactOnMyWelcomeMessage() {
-        Client.connection.connectionConfirmed = true;
+        Client.connection.connectionOpened = true;
     }
 }

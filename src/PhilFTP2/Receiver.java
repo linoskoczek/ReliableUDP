@@ -26,7 +26,7 @@ public class Receiver extends Thread {
             String[] splitted = new String(packet.getData(), 0, packet.getLength()).split(":");
 
             System.out.println("IN: " + Arrays.toString(splitted));
-
+            //todo check MD5 of message
             if (splitted.length == 5) {
                 try {
                     switch (splitted[2]) {
