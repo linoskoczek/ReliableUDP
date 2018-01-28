@@ -135,7 +135,7 @@ Server exists.
 
 - It checks MD5 hash of every message and compares it with the one that is given in a package. It's almost impossible
 to lose some information from ID, CMD or DATA and have a correct MD5 hash.
-- It checks file MD5 sum after it's sent by a client.
+- It checks file's MD5 sum after it's sent by a client.
 - It will resend a packet if ACK message won't be delivered by another node.
 - It will shift to previous file parts and send them again if server asks for that.
 
@@ -145,8 +145,8 @@ to lose some information from ID, CMD or DATA and have a correct MD5 hash.
 Protocol saves information about sent packets and time at which they were sent. Also, it keeps time when it started to 
 send data. This way, it can calculate average speed from any time of a transfer. 
 
-Server is able to decide about how much data it wants to be transferred per second. Then, the protocol can decide about 
-time of waiting between sending packets.
+Server is able to decide about how much data it wants to be transferred per second. Then, by using the information 
+above, the protocol can decide about waiting time between sending packets.
 
 ### Progress measurement
 Apart from speed calculations, you can also measure how much bytes have been already sent and how much are left. This 
@@ -175,7 +175,7 @@ exchanged at the beginning and current number of part that has been sent/receive
 
 ## Bugs in current _draft_ implementation
 - if `:` will appear in a file content, the packet will not be delivered correctly. Solution of that is to create a good
-package and not mess up with strings.
+packet and not mess up with strings.
 - if last part of a file will be sent by a client and server will not be able to use last but one packet, server will 
 have no time to ask client to shift sending to last but one packet, because client might disconnect till this time...
 - ... and same thing happens when received file's MD5 doesn't match MD5 that was sent at the beginning. Solution for 
