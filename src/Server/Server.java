@@ -6,7 +6,6 @@ import com.sun.istack.internal.NotNull;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.InetSocketAddress;
 import java.net.SocketException;
 
 public class Server {
@@ -62,7 +61,7 @@ public class Server {
         }
         if (serverMessageProcessor == null) {
             createMessageProcessor(packet);
-            //connectSocketToThisSpecificClient(packet);
+            connectSocketToThisSpecificClient(packet);
         }
         session.updateTime();
         serverMessageProcessor.processMessage(packet);
@@ -78,6 +77,6 @@ public class Server {
     }
 
     private static void connectSocketToThisSpecificClient(DatagramPacket packet) {
-        session.connectTo(new InetSocketAddress(packet.getAddress(), packet.getPort()));
+        session.connectTo(packet.getAddress(), packet.getPort());
     }
 }

@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Writer;
 
+import static Utilities.MessageManager.sendMessage;
+
 public class FileReceiver implements FileManager {
     private File file = null;
     private String name, md5;
@@ -62,20 +64,32 @@ public class FileReceiver implements FileManager {
     }
 
     public void write(String message) {
-        String[] content = message.split(";"); //todo next ; should be considered!
+        String[] content = message.split(";");
 
-        long nextPart = Long.parseLong(content[0]);
-        //todo ask for resend when nextPart is bigger for more than 2
-        try {
-            for (int i = 1; i < content.length; i++) {
-                if (i != 1) writer.write(";");
-                writer.write(content[i]);
+        if (Long.parseLong(content[0]) > currentPart + 1) {
+            askForPacket(currentPart);
+        } else {
+            try {
+                for (int i = 1; i < content.length; i++) {
+                    if (i != 1) writer.write(";");
+                    writer.write(content[i]);
+                }
+            } catch (IOException e) {
+                System.err.println("Something wrong while writing!");
+                e.printStackTrace();
             }
-        } catch (IOException e) {
-            System.err.println("Something wrong while writing!");
-            e.printStackTrace();
+            currentPart++;
         }
-        currentPart++;
+    }
+
+    private void askForPacket(long currentPart) {
+        String cmd = "PRP";
+        String message = String.valueOf(currentPart);
+        try {
+            sendMessage(cmd, message, Server.serverMessageProcessor.clientAddress, Server.serverMessageProcessor.clientPort);
+        } catch (IOException e) {
+            System.err.println("Could not send WELCOME message to the client.");
+        }
     }
 
     public void finish() {

@@ -1,8 +1,7 @@
 package Server;
 
 import java.net.DatagramSocket;
-import java.net.InetSocketAddress;
-import java.net.SocketException;
+import java.net.InetAddress;
 
 public class Session extends Thread {
     private DatagramSocket serverSocket;
@@ -38,14 +37,9 @@ public class Session extends Thread {
         return lastTimeSeen + timeout < System.currentTimeMillis();
     }
 
-    void connectTo(InetSocketAddress address) {
-        System.out.println(address);
-        try {
-            serverSocket.connect(address);
-            System.out.println("Server's socket connected to " + address.getHostName() + ":" + address.getPort());
-        } catch (SocketException e) {
-            System.err.println("Could not connect to a specific client. Connection is unsafe now!!! REPEAT: UNSAFE!");
-        }
+    void connectTo(InetAddress address, int port) {
+        serverSocket.connect(address, port);
+        System.out.println("Server's socket connected to " + address.getHostName() + ":" + port);
     }
 
     void disconnect() {

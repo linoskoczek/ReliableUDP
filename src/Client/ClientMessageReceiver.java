@@ -29,9 +29,15 @@ public class ClientMessageReceiver extends Thread {
             case "FLI":
                 fileInformationAnswerReceived(message[4]);
                 break;
+            case "PRP":
+                askToResendPacket(message[4]);
             default:
                 System.out.println("Unrecognized message arrived. Ignoring... CMD: " + message[2]);
         }
+    }
+
+    private void askToResendPacket(String s) {
+        Client.fileSender.setCurrentPart(Integer.parseInt(s));
     }
 
     private void fileInformationAnswerReceived(String message) {

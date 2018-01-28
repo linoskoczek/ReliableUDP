@@ -80,6 +80,10 @@ class FileSender implements FileManager, Runnable {
         return currentPart++;
     }
 
+    public synchronized void setCurrentPart(int part) {
+        currentPart = part;
+    }
+
     private void sendFinishMessage() {
         String cmd = "FSF";
 
