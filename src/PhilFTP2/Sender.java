@@ -41,15 +41,11 @@ public class Sender {
         }
     }
 
-    public static String getChecksum(String txt) {
-        return FileUtility.calculateMD5(txt.getBytes());
-    }
-
     public static String prepareMessage(short ackId, String cmd, String data) {
         return (new StringBuilder())
                 .append(ackId)
                 .append(":")
-                .append(getChecksum(ackId + cmd + data))
+                .append(FileUtility.getChecksum(ackId + cmd + data))
                 .append(":")
                 .append(cmd)
                 .append(":")

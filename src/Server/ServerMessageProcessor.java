@@ -36,6 +36,8 @@ public class ServerMessageProcessor {
             case "CNT":
                 processFileContent(message[4]);
                 break;
+            case "FSF":
+                processFileSendingFinished();
             case "DSC":
                 Server.session.disconnect();
                 break;
@@ -44,10 +46,14 @@ public class ServerMessageProcessor {
         }
     }
 
+    private void processFileSendingFinished() {
+        fileReceiver.finish();
+    }
+
     private void processFileInformation(String message) {
         String[] fileInformation = message.split(";");
         String name = fileInformation[0];
-        String md5 = fileInformation[1];
+        String md5 = fileInformation[3];
         long size = Long.valueOf(fileInformation[1]);
 
         fileReceiver = new FileReceiver(name, size, md5);
@@ -67,7 +73,12 @@ public class ServerMessageProcessor {
     }
 
     private void processFileContent(String message) {
-        if(fileReceiver == null) return;
+        if (fileReceiver == null) {
+            System.err.println("File content was sent before client asked to send something! Ignoring...");
+            return;
+        }
+        fileReceiver.write(message);
+
     }
 
     void welcomeMessageAnswer() {

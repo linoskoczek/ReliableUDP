@@ -21,7 +21,7 @@ public class Client {
     static ClientMessageReceiver clientMessageReceiver;
     static FileSender fileSender;
 
-    public static void main(String... args) {
+    public static void main(String... args) throws InterruptedException {
         readArguments(args);
         clientSocket = createSocket();
 
@@ -39,10 +39,11 @@ public class Client {
         Thread sender = new Thread(fileSender);
         sender.start();
 
-        while (true) {
+        while (connection.connectionOpened) {
+            Thread.sleep(50);
         }
 
-//        connection.disconnect();
+        connection.disconnect();
     }
 
     private static void readArguments(@NotNull String[] args) {

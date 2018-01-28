@@ -3,7 +3,6 @@ package Client;
 import Utilities.MessageManager;
 
 import java.net.DatagramPacket;
-import java.util.Arrays;
 
 public class ClientMessageReceiver extends Thread {
     boolean receiverRunning = true;
@@ -22,7 +21,7 @@ public class ClientMessageReceiver extends Thread {
     }
 
     private void processMessage(String msg) {
-        String[] message = msg.split(":"); //todo check with ':' as a file content or it's name
+        String[] message = msg.split(":");
         switch (message[2]) {
             case "HAI":
                 reactOnMyWelcomeMessage();
@@ -37,7 +36,6 @@ public class ClientMessageReceiver extends Thread {
 
     private void fileInformationAnswerReceived(String message) {
         String[] content = message.split(";");
-        System.out.println(Arrays.toString(content));
         if (content[0].equals("KK")) {
             Client.fileSender.setSpeed(Integer.parseInt(content[1]));
             System.out.println("Speed changed to " + content[1]);

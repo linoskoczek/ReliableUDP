@@ -1,5 +1,7 @@
 package PhilFTP2;
 
+import Utilities.FileUtility;
+
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.util.Arrays;
@@ -28,18 +30,22 @@ public class Receiver extends Thread {
             System.out.println("IN: " + Arrays.toString(splitted));
             //todo check MD5 of message
             if (splitted.length == 5) {
-                try {
-                    switch (splitted[2]) {
-                        case "ACK":
-                            AcknowledgeMaster.getInstance().acknowledge(Short.parseShort(splitted[4]));
-                            break;
-                        default:
-                            Sender.sendAck(Short.parseShort(splitted[0]), packet.getSocketAddress());
-                            if (splitted[2].length() == 3 && !received.contains(packet)) received.push(packet);
-                    }
+                if (FileUtility.getChecksum(splitted[0] + splitted[2] + splitted[4]).equals(splitted[1])) {
+                    try {
+                        switch (splitted[2]) {
+                            case "ACK":
+                                AcknowledgeMaster.getInstance().acknowledge(Short.parseShort(splitted[4]));
+                                break;
+                            default:
+                                Sender.sendAck(Short.parseShort(splitted[0]), packet.getSocketAddress());
+                                if (splitted[2].length() == 3 && !received.contains(packet)) received.push(packet);
+                        }
 
-                } catch (ArrayIndexOutOfBoundsException ignored) {
-                    System.out.println("Some corrupted data received...");
+                    } catch (ArrayIndexOutOfBoundsException ignored) {
+                        System.out.println("Some corrupted data received...");
+                    }
+                } else {
+                    System.out.println("MD5 hash of received message does not match!");
                 }
             } else {
                 System.out.println("Received packet is incomplete");

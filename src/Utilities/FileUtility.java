@@ -7,13 +7,19 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public class FileUtility {
-    public static byte[] getByteArrayOfFile(String path) {
+    public static byte[] getByteArrayOfFile(File file) {
+        return getByteArrayOfFile(file.toPath());
+    }
+
+    public static byte[] getByteArrayOfFile(Path path) {
         try {
-            return Files.readAllBytes(new File(path).toPath());
+            return Files.readAllBytes(path);
         } catch (IOException e) {
             System.err.println("Could not get byte array of file!");
             e.printStackTrace();
@@ -44,7 +50,7 @@ public class FileUtility {
     }
 
     public static String calculateMD5(String path) {
-        byte[] bytesOfMessage = getByteArrayOfFile(path);
+        byte[] bytesOfMessage = getByteArrayOfFile(Paths.get(path));
         return calculateMD5(bytesOfMessage);
     }
 
@@ -58,5 +64,9 @@ public class FileUtility {
             e.printStackTrace();
         }
         return md5;
+    }
+
+    public static String getChecksum(String s) {
+        return FileUtility.calculateMD5(s.getBytes());
     }
 }

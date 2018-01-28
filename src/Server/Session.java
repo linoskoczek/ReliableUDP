@@ -64,7 +64,7 @@ public class Session extends Thread {
                 Thread.sleep(100);
             } catch (InterruptedException ignored) {}
         }
-        System.out.println("Timed out. Exiting.");
+        System.out.println("Timed out.");
         Server.receiverRunning = false;
         System.exit(0);
     }

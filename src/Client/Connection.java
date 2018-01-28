@@ -29,10 +29,6 @@ class Connection extends MessageManager {
         }
     }
 
-    public void confirmConnection() {
-        connectionOpened = true;
-    }
-
     public void disconnect() {
         sendMessage("DSC", "DISCONNECT");
         System.exit(0);

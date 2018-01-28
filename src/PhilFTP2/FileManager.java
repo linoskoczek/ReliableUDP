@@ -5,11 +5,12 @@ import java.io.IOException;
 
 public interface FileManager {
 
-    default void createFile(String name) {
+    default String createFile(String name) {
         StringBuilder newName = new StringBuilder(name);
         File f = new File(newName.toString());
         while (f.exists()) {
-            newName.append(" (copy)");
+            String extension = getFileExtension(name);
+            newName.replace(newName.length() - extension.length() - 1, newName.length(), " (copy)." + extension);
             f = new File(newName.toString());
         }
         try {
@@ -17,6 +18,17 @@ public interface FileManager {
         } catch (IOException e) {
             System.err.println("File could not be created! Check if you have write permissions.");
         }
+        return newName.toString();
+    }
+
+    default String getFileExtension(String fileName) {
+        String extension = "";
+
+        int i = fileName.lastIndexOf('.');
+        if (i > 0) {
+            extension = fileName.substring(i + 1);
+        }
+        return extension;
     }
 
 

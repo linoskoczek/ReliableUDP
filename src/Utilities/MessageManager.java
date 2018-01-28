@@ -15,6 +15,11 @@ public class MessageManager {
 
     public static DatagramPacket receiveMessage() {
         while (Receiver.received.isEmpty()) {
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             //waiting to get any response
         }
         return Receiver.received.pollLast();
